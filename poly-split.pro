@@ -8,13 +8,19 @@ SOURCES += \
     line.cpp \
     polygon.cpp \
     renderarea.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    camerawindow.cpp
 
 HEADERS += \
         line.h \
         polygon.h \
         vector.h \
         renderarea.h \
-        mainwindow.h
+        mainwindow.h \
+    camerawindow.h
 
-FORMS += mainwindow.ui
+FORMS += mainwindow.ui \
+    camerawindow.ui
+
+RESOURCES += \
+    res.qrc

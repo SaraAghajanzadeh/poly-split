@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CameraWindow</class>
+ <widget class="QMainWindow" name="CameraWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>534</width>
+    <height>485</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="formLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>30</y>
+      <width>351</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="camera_horizontal_resolution_label">
+       <property name="text">
+        <string>Camera Horizontal Resolution</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="camera_vertical_resolution_label">
+       <property name="text">
+        <string>Camera Vertical Resolution</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="camera_focal_length_label">
+       <property name="text">
+        <string>Camera Focal Length</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="camera_chip_width_label">
+       <property name="text">
+        <string>Camera Chip Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QPushButton" name="done_button">
+       <property name="text">
+        <string>Done!</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QTextEdit" name="ppf_threshold_text"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QTextEdit" name="camera_chip_width_text"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTextEdit" name="camera_focal_length_text"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QTextEdit" name="camera_vertical_resolution_text"/>
+     </item>
+     <item row="0" column="1">
+      <widget class="QTextEdit" name="camera_horizontal_resolution_text"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QTextEdit" name="camera_angle_view_text"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="camera_angle_view_label">
+       <property name="text">
+        <string>Camera Angle View</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="ppf_threshold_label">
+       <property name="text">
+        <string>Pixels Per Foot (PPF) Threshold</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="formLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>300</y>
+      <width>351</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout_2">
+     <item row="1" column="0">
+      <widget class="QLabel" name="foc_label">
+       <property name="text">
+        <string>Field of Coverage Area</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QTextEdit" name="distance_text">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QTextEdit" name="foc_text">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="distance_label">
+       <property name="text">
+        <string>Distance to Object of Interest</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>534</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

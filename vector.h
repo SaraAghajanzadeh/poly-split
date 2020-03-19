@@ -111,6 +111,20 @@ public:
         out << "(" << v.x << ", " << v.y << ", " << v.z << ")";
         return out;
     }
+
+    /*Added the following angle() function to determine the angle for the polygon vertex.*/
+    static double angle(const Vector &v2, const Vector &v1, const Vector &v3)
+    {
+        double dx21 = v2.x-v1.x;
+        double dx31 = v3.x-v1.x;
+        double dy21 = v2.y-v1.y;
+        double dy31 = v3.y-v1.y;
+        double m12 = sqrt( dx21*dx21 + dy21*dy21 );
+        double m13 = sqrt( dx31*dx31 + dy31*dy31 );
+        double theta = acos( (dx21*dx31 + dy21*dy31) / (m12 * m13) );
+        return theta*180/M_PI;
+
+    }
 };
 
 typedef std::vector<Vector> Vectors;

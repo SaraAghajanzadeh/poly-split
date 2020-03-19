@@ -496,3 +496,4 @@ int Polygon::isClockwise() const
     sum += (poly[0].x - poly[t].x) * (poly[0].y + poly[t].y);
     return sum <= 0;
 }
+
