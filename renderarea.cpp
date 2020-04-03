@@ -30,6 +30,7 @@
  */
 #include<fstream>
 #include<iostream>
+#include<ctime>
 
 QVector<QPoint> pointsMainPoly;
 std::map<std::string,double> RenderArea::camera;
@@ -104,18 +105,18 @@ RenderArea::RenderArea(QWidget *parent)
     setAutoFillBackground(true);
     setMouseTracking(true);
 
-    polygons_colors.push_back(Qt::darkRed);
-    polygons_colors.push_back(Qt::green);
-    polygons_colors.push_back(Qt::darkGreen);
-    polygons_colors.push_back(Qt::blue);
-    polygons_colors.push_back(Qt::darkBlue);
-    polygons_colors.push_back(Qt::cyan);
-    polygons_colors.push_back(Qt::darkCyan);
-    polygons_colors.push_back(Qt::magenta);
-    polygons_colors.push_back(Qt::darkMagenta);
-    polygons_colors.push_back(Qt::darkYellow);
+    //polygons_colors.push_back(Qt::darkRed);
+    //polygons_colors.push_back(Qt::green);
+    //polygons_colors.push_back(Qt::darkGreen);
+    //polygons_colors.push_back(Qt::blue);
+    //polygons_colors.push_back(Qt::darkBlue);
+    //polygons_colors.push_back(Qt::cyan);
+    //polygons_colors.push_back(Qt::darkCyan);
+    //polygons_colors.push_back(Qt::magenta);
+    //polygons_colors.push_back(Qt::darkMagenta);
+    //polygons_colors.push_back(Qt::darkYellow);
     polygons_colors.push_back(Qt::gray);
-    polygons_colors.push_back(Qt::darkGray);
+    //polygons_colors.push_back(Qt::darkGray);
 
     initPolygons();
 
@@ -163,7 +164,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         painter.drawLine(QPointF(mouse.x, mouse.y), QPointF(np.x, np.y));
     }
 
-    painter.setPen(QPen(QColor(250, 0, 0, 100), 3));
+    //painter.setPen(QPen(QColor(250, 0, 0, 100), 3));
     painter.setBrush(Qt::transparent);
     drawPoly(painter, polygons[selectedPolygon]);
     /*Added the following:
@@ -192,9 +193,12 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         //std::cout<< i<<" "<<Vector::angle(p,p2,p3)<<p<<p2<<p3<<std::endl;
         //painter.drawText(QPointF(p2.x,p2.y),QString::number(qRound(Vector::angle(p,p2,p3))).append(degreeChar));
     }
+    QColor semi = palette().light().color();
+    semi.setAlpha(200);
 
     QBrush brush;
     QPainterPath path;
+    //brush.setColor(semi);
     brush.setColor(Qt::darkGray);
     brush.setStyle(Qt::SolidPattern);
     //Displaying initial fovs
@@ -233,8 +237,18 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         for(int i=0; i<size; i++)
         {
             path.addPolygon(final_focs[i]);
+            //painter.fillPath(path, semi);
             painter.fillPath(path, brush);
+
         }
+        //displaying them in semi transparent color
+        /*for(QPolygon foc : final_focs)
+        {
+            QPainterPath path;
+            path.addPolygon(foc);
+            painter.fillPath(path,brush);
+        }*/
+        //painter.fillPath(path,brush);
     }
 
     painter.restore();
@@ -247,7 +261,10 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 
 void RenderArea::keyPressEvent(QKeyEvent *event)
 {
-    //squareToCut = 12800;
+    /*squareToCut = 3840;
+    double d = 80;
+    double a = 67;
+    double hfov = 96;*/
     squareToCut = getCamera().find("foc")->second;
     double d = getCamera().find("distance")->second;
     double a = getCamera().find("angle")->second;
@@ -271,33 +288,57 @@ void RenderArea::keyPressEvent(QKeyEvent *event)
     {
         Polygon poly1, poly2;
         Line cut;
-        if(polygons[selectedPolygon].split(squareToCut, poly1, poly2, cut))
+        if((polygons[selectedPolygon].split(squareToCut, poly1, poly2, cut)))
         {
-
             if(poly1.countSquare() < poly2.countSquare())
             {
                 polygons[selectedPolygon] = poly1;
                 polygons.push_back(poly2);
+                std::cout<<poly1.countSquare()<<std::endl;
+                std::cout<<poly2.countSquare()<<std::endl;
                 cutPolygons.push_back(poly1);
                 selectedPolygon = polygons.size() - 1;
-            }
 
-            if (!(poly1.countSquare() < poly2.countSquare()))
+            }
+            if(poly2.countSquare() < poly1.countSquare())
             {
                 polygons[selectedPolygon] = poly2;
                 polygons.push_back(poly1);
+                std::cout<<poly1.countSquare()<<std::endl;
+                std::cout<<poly2.countSquare()<<std::endl;
                 cutPolygons.push_back(poly2);
                 selectedPolygon = polygons.size() - 1;
             }
+            // Needed for base case with 5 subpolygons
+            /*else
+            {
+                std::cout<<"equal"<<std::endl;
+                std::cout<<poly1.countSquare()<<std::endl;
+                std::cout<<poly2.countSquare()<<std::endl;
+                cutPolygons.push_back(poly1);
+                cutPolygons.push_back(poly2);
+                repaint();
+            }*/
 
+            repaint();
+        }
+        // work around for the left over subpolygon
+        else
+        {
+            std::cout<<"else"<<std::endl;
+            std::cout<<poly1.countSquare()<<std::endl;
+            std::cout<<poly2.countSquare()<<std::endl;
+            cutPolygons.push_back(poly1);
             repaint();
         }
     }
     // Added Key K to print coordinates of the cuted polygons.
     if(event->key() == Qt::Key_K)
     {
+        clock_t start = clock();
         //std::cout<<cutPolygons.size()<<std::endl;
-        std::cout<<cutPolygons[--selectedPolygon].size()<<std::endl; //Initially selectedPolygon is 1, then 0. Equal to j.
+        --selectedPolygon;
+        //std::cout<<cutPolygons[--selectedPolygon].size()<<std::endl; //Initially selectedPolygon is 1, then 0. Equal to j.
         QPolygon subpolygon; // equivalent to cutPolygons[j]
         QVector<QPoint> subpoints;
         for(size_t j = 0; j < cutPolygons.size(); j++)
@@ -309,8 +350,8 @@ void RenderArea::keyPressEvent(QKeyEvent *event)
                 subpoints.push_back(QPoint(p.x,p.y));
                 /* fieldofCoverage function in Polygon class returns a camera foc subject to camera specifications. */
                 QPolygon mytriangle = Polygon::fieldofCoverage(a,d,p, hfov);
-                int first_degree = 30;
-                for (int d = 1; d<12; d++)
+                int first_degree = 1;
+                for (int d = 1; d<360; d++)
                 {
                     QPolygon new_foc = Polygon::rotatePolygon(p,mytriangle,first_degree*d); //rotate every (first_degree) degrees
                     new_focs.push_back(new_foc);
@@ -319,7 +360,7 @@ void RenderArea::keyPressEvent(QKeyEvent *event)
                 //focs.push_back(mytriangle);
 
             }
-            std::cout<<"\n"<<std::endl;
+            //std::cout<<"\n"<<std::endl;
 
             subpolygon = QPolygon(subpoints);
             subpolygons.push_back(subpolygon);
@@ -349,10 +390,16 @@ void RenderArea::keyPressEvent(QKeyEvent *event)
             localPlacementScore.clear();
 
         }
+        clock_t end = clock();
+        double elapsed_time = double(end-start) / CLOCKS_PER_SEC;
+        //std::cout<<"reedy Camera Placement took:"<<std::endl;
+        //std::cout<<elapsed_time<<std::endl;
+        fprintf(stdout, "Greedy Camera Placement took: %f \n", 50, elapsed_time);
 
         selectedPolygon+=1;
         fflush(stdout);
         repaint();
+
     }
 
     // Key P prints coordinates of the selected polygon.
@@ -401,14 +448,22 @@ void RenderArea::keyPressEvent(QKeyEvent *event)
         showHelp = !showHelp;
         repaint();
     }
-
+    // Added Key F to print total coverage and total overlap achieved.
     if(event->key() == Qt::Key_F)
     {
         int coverage_score, overlap_score = 0;
+        clock_t coverage_start = clock();
         coverage_score = RenderArea::calculateCoverage(final_focs);
-        std::cout<<"coverage score:"<<coverage_score<<std::endl;
+        clock_t coverage_end = clock();
+        double coverage_elapsed_time = double(coverage_end - coverage_start) / CLOCKS_PER_SEC;
+        std::cout<<"coverage percentage score:"<<coverage_score<<std::endl;
+        std::cout<<"coverage elapsed time:"<<coverage_elapsed_time<<std::endl;
+        clock_t overlap_start = clock();
         overlap_score = RenderArea::calculateOverlap(final_focs);
-        std::cout<<"overlap score:"<<overlap_score<<std::endl;
+        clock_t overlap_end = clock();
+        double overlap_elapsed_time = double(overlap_end - overlap_start) / CLOCKS_PER_SEC;
+        std::cout<<"overlap percentage score:"<<overlap_score<<std::endl;
+        std::cout<<"overlap elapsed time:"<<overlap_elapsed_time<<std::endl;
     }
 
 }
@@ -495,7 +550,7 @@ void RenderArea::initPolygons()
     polygons.clear();
     polygons.push_back(Polygon());
 
-    polygons[0].push_back(Vector(450.0, 100.0));
+    /*polygons[0].push_back(Vector(450.0, 100.0));
     polygons[0].push_back(Vector(900.0, 100.0));
     polygons[0].push_back(Vector(900.0, 400.0));
     polygons[0].push_back(Vector(450.0, 400.0));
@@ -514,9 +569,8 @@ void RenderArea::initPolygons()
     QPoint tmppoint4;
     tmppoint4.setX(450.0);
     tmppoint4.setY(400.0);
-    pointsMainPoly.push_back(tmppoint4);
+    pointsMainPoly.push_back(tmppoint4);*/
 
-    /*
 
 
     // coordinates x and y
@@ -526,7 +580,7 @@ void RenderArea::initPolygons()
     // Vector object with coordinates x and y
     Vector v;
     // create input stream object
-    std::ifstream infile("/Users/saraaghajanzadeh/Desktop/coordinate.txt");
+    std::ifstream infile("/Users/saraaghajanzadeh/Desktop/FL4/25.txt");
     if(!infile) {std::cout<<"can not open input file"<<std::endl;}
     // read contents of the input file (coordinates)
     while(infile >> x >> y){
@@ -536,12 +590,11 @@ void RenderArea::initPolygons()
         tmppoint.setY(y);
         pointsMainPoly.push_back(tmppoint);
     }
+    //RenderArea::camera.insert(std::pair<std::string,double>("foc",0));
 
-    RenderArea::fieldofCoverage = 0;
-    RenderArea::camera.insert(std::pair<std::string,double>("foc",0));
-    squareToCut = 0;*/
-
-    squareToCut = polygons[0].countSquare() / 47.0;
+    //squareToCut = polygons[0].countSquare() / 47.0;
+    std::cout<<polygons[0].countSquare()<<std::endl;
+    squareToCut = 2688;
     selectedPolygon = 0;
 }
 
@@ -589,9 +642,11 @@ int RenderArea::calculateCoverage(std::vector<QPolygon> fovs){
     float coveredPoints = 0;
     float coverageScore = 0;
     QPoint star;
-    for(int x=450;x<900;x++)
+    // Must set boundary for horizontal pixels: min x to max x
+    for(int x=330;x<=1002;x++)
     {
-        for(int y=100;y<400;y++)
+        // Must set boundary for vertical pixels: min y to max y
+        for(int y=136;y<=296;y++)
         {
 
             if(mainPolygon.containsPoint(QPoint(x,y),Qt::WindingFill))
@@ -613,7 +668,7 @@ int RenderArea::calculateCoverage(std::vector<QPolygon> fovs){
     }
     std::cout<<"total points inside: "<<totalPointsInsidePolygon<<std::endl;
     std::cout<<"coveredPoints: "<<coveredPoints<<std::endl;
-    coverageScore = coveredPoints/totalPointsInsidePolygon * 100;
+    coverageScore = (coveredPoints/totalPointsInsidePolygon) * 100;
     return coverageScore;
 }
 
